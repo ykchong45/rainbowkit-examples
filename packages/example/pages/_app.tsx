@@ -120,11 +120,11 @@ const connectors = connectorsForWallets([
     groupName: 'Other',
     wallets: [
       argentWallet({ chains }),
-      trustWallet({ chains }),
-      omniWallet({ chains }),
+      exodusWallet({ chains }),
       imTokenWallet({ chains }),
       ledgerWallet({ chains }),
-      exodusWallet({ chains }),
+      omniWallet({ chains }),
+      trustWallet({ chains }),
     ],
   },
 ]);
