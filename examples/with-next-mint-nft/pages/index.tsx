@@ -6,6 +6,7 @@ import {
   useAccount,
   useContractRead,
   useContractWrite,
+  usePrepareContractWrite,
   useWaitForTransaction,
 } from 'wagmi';
 import contractInterface from '../contract-abi.json';
@@ -17,8 +18,16 @@ const contractConfig = {
 };
 
 const Home: NextPage = () => {
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
+
   const [totalMinted, setTotalMinted] = React.useState(0);
   const { isConnected } = useAccount();
+
+  const { config: contractWriteConfig } = usePrepareContractWrite({
+    ...contractConfig,
+    functionName: 'mint',
+  });
 
   const {
     data: mintData,
@@ -26,7 +35,7 @@ const Home: NextPage = () => {
     isLoading: isMintLoading,
     isSuccess: isMintStarted,
     error: mintError,
-  } = useContractWrite({ ...contractConfig, functionName: 'mint' });
+  } = useContractWrite(contractWriteConfig);
 
   const { data: totalSupplyData } = useContractRead({
     ...contractConfig,
@@ -34,7 +43,11 @@ const Home: NextPage = () => {
     watch: true,
   });
 
-  const { isSuccess: txSuccess, error: txError } = useWaitForTransaction({
+  const {
+    data: txData,
+    isSuccess: txSuccess,
+    error: txError,
+  } = useWaitForTransaction({
     hash: mintData?.hash,
   });
 
@@ -68,14 +81,14 @@ const Home: NextPage = () => {
               </p>
             )}
 
-            {isConnected && !isMinted && (
+            {mounted && isConnected && !isMinted && (
               <button
                 style={{ marginTop: 24 }}
-                disabled={isMintLoading || isMintStarted}
+                disabled={!mint || isMintLoading || isMintStarted}
                 className="button"
                 data-mint-loading={isMintLoading}
                 data-mint-started={isMintStarted}
-                onClick={() => mint()}
+                onClick={() => mint?.()}
               >
                 {isMintLoading && 'Waiting for approval'}
                 {isMintStarted && 'Minting...'}
@@ -120,7 +133,7 @@ const Home: NextPage = () => {
                 <p>
                   View on{' '}
                   <a
-                    href={`https://testnets.opensea.io/assets/rinkeby/${mintData?.to}/1`}
+                    href={`https://testnets.opensea.io/assets/rinkeby/${txData?.to}/1`}
                   >
                     Opensea
                   </a>

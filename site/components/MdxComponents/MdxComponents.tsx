@@ -102,7 +102,11 @@ export const components = {
       </Link>
     </Box>
   ),
-  Img: props => <NextImage {...props} />,
+  Img: ({ id, src, ...props }) => (
+    <Box id={id} marginBottom="8">
+      <NextImage layout="responsive" loading="lazy" src={src} {...props} />
+    </Box>
+  ),
   li: ({ children, ...props }) => (
     <Box alignItems="center" as="li" display="flex" {...props}>
       <Box
@@ -186,11 +190,13 @@ export const components = {
     <Box
       as="video"
       autoPlay
+      borderRadius="3"
       controls
+      display="block"
       marginBottom="5"
       muted
       playsInline
-      style={{ display: 'block', width: '100%' }}
+      style={{ width: '100%' }}
       {...props}
     />
   ),
