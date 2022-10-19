@@ -27,6 +27,7 @@ const Home: NextPage = () => {
   const { config: contractWriteConfig } = usePrepareContractWrite({
     ...contractConfig,
     functionName: 'mint',
+    enabled: mounted,
   });
 
   const {
